@@ -43,17 +43,28 @@ public class Calculadora extends JFrame implements ActionListener {
 
         String valor = claveValor.get(e.getSource());
         String campo = inputRespuesta.getText();
+        int numero = -1;
 
-        if(e.getSource() == btnMult && !campo.isEmpty()) {
+        if(!campo.isEmpty()) {
+            try {
+                String ultimo = String.valueOf(campo.charAt(campo.length() - 1));
+                numero = Integer.parseInt(ultimo);
+
+            } catch (NumberFormatException nf) {
+                System.out.println(nf.getMessage());
+            }
+        }
+
+        if(e.getSource() == btnMult && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "*");
-        } else if (e.getSource() == btnDivision && !campo.isEmpty()) {
+        } else if (e.getSource() == btnDivision && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "/");
-        } else if (e.getSource() == btnSuma && !campo.isEmpty()) {
+        } else if (e.getSource() == btnSuma && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "+");
-        } else if (e.getSource() == btnResta && !campo.isEmpty()) {
+        } else if (e.getSource() == btnResta && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "-");
         } else if (e.getSource() == btnIgual && !campo.isEmpty()) {
-
+            inputRespuesta.setText(String.valueOf(calcular(campo)));
         } else {
             if (valor != null) {
                 inputRespuesta.setText(inputRespuesta.getText() + valor);
@@ -78,5 +89,23 @@ public class Calculadora extends JFrame implements ActionListener {
         }
 
         return valoresBotones;
+    }
+
+    private double calcular(String campo) {
+        double resultado = 0;
+        char[] caracteres = campo.toCharArray();
+
+        for (char c : caracteres) {
+
+            if(!Character.isDigit(c)) {
+
+                switch (c) {
+                    case '*' ->
+                }
+            }
+            resultado += c;
+        }
+
+        return resultado;
     }
 }
