@@ -92,20 +92,50 @@ public class Calculadora extends JFrame implements ActionListener {
     }
 
     private double calcular(String campo) {
-        double resultado = 0;
+        double total = 0;
+        double valorIzquierdo = 0;
+        double valorDerecha = 0;
         char[] caracteres = campo.toCharArray();
 
-        for (char c : caracteres) {
+        int operacion = -1;
+        for (int i = 0; i < caracteres.length; i++) {
 
-            if(!Character.isDigit(c)) {
-
-                switch (c) {
-                    case '*' ->
+            if(Character.isDigit(caracteres[i])) {
+                if(operacion != -1) {
+                    valorDerecha += caracteres[i];
+                    continue;
                 }
+                valorIzquierdo += caracteres[i];
+                continue;
             }
-            resultado += c;
-        }
+            if (operacion != -1) {
 
-        return resultado;
+                switch (caracteres[operacion]) {
+                    case '*' -> {
+                        total = valorIzquierdo * valorDerecha;
+                        operacion = -1;
+                    }
+
+                    case '/' -> {
+                        total = valorIzquierdo / valorDerecha;
+                        operacion = -1;
+                    }
+
+                    case '+' -> {
+                        total = valorIzquierdo + valorDerecha;
+                        operacion = -1;
+                    }
+
+                    case '-' -> {
+                        total = valorIzquierdo - valorDerecha;
+                        operacion = -1;
+                    }
+                }
+                valorIzquierdo = 0;
+                valorDerecha = 0;
+            }
+            operacion = i;
+        }
+        return total;
     }
 }
