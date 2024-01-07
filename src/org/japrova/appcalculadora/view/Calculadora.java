@@ -3,7 +3,10 @@ package org.japrova.appcalculadora.view;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.ListIterator;
 
 public class Calculadora extends JFrame implements ActionListener {
     private JTextField inputRespuesta;
@@ -64,7 +67,6 @@ public class Calculadora extends JFrame implements ActionListener {
         } else if (e.getSource() == btnResta && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "-");
         } else if (e.getSource() == btnIgual && !campo.isEmpty()) {
-            inputRespuesta.setText(String.valueOf(calcular(campo)));
         } else {
             if (valor != null) {
                 inputRespuesta.setText(inputRespuesta.getText() + valor);
@@ -73,7 +75,7 @@ public class Calculadora extends JFrame implements ActionListener {
     }
 
     private void inicializarAcciones() {
-        JButton[] botones = {b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, btnDivision, btnMult, btnResta, btnSuma};
+        JButton[] botones = {b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, btnDivision, btnMult, btnResta, btnSuma, btnIgual};
 
         for (JButton botone : botones) {
             botone.addActionListener(this);
@@ -91,51 +93,46 @@ public class Calculadora extends JFrame implements ActionListener {
         return valoresBotones;
     }
 
-    private double calcular(String campo) {
-        double total = 0;
-        double valorIzquierdo = 0;
-        double valorDerecha = 0;
-        char[] caracteres = campo.toCharArray();
+    private void ordenarCampos(String campo) {
+        char[] digitos = campo.toCharArray();
+        double totalCampo = 0;
+        List<Character> operaciones = new ArrayList<>();
+        List<Double> campos = new ArrayList<>();
 
-        int operacion = -1;
-        for (int i = 0; i < caracteres.length; i++) {
-
-            if(Character.isDigit(caracteres[i])) {
-                if(operacion != -1) {
-                    valorDerecha += caracteres[i];
-                    continue;
-                }
-                valorIzquierdo += caracteres[i];
+        for (char d: digitos) {
+            if (Character.isDigit(d)) {
+                totalCampo += d;
                 continue;
             }
-            if (operacion != -1) {
-
-                switch (caracteres[operacion]) {
-                    case '*' -> {
-                        total = valorIzquierdo * valorDerecha;
-                        operacion = -1;
-                    }
-
-                    case '/' -> {
-                        total = valorIzquierdo / valorDerecha;
-                        operacion = -1;
-                    }
-
-                    case '+' -> {
-                        total = valorIzquierdo + valorDerecha;
-                        operacion = -1;
-                    }
-
-                    case '-' -> {
-                        total = valorIzquierdo - valorDerecha;
-                        operacion = -1;
-                    }
-                }
-                valorIzquierdo = 0;
-                valorDerecha = 0;
-            }
-            operacion = i;
+            campos.add(totalCampo);
+            operaciones.add(d);
         }
-        return total;
+        ListIterator<Double> listIterator = campos.listIterator();
+
+        int indice = 0;
+        while (listIterator.hasNext()) {
+
+            double valor = listIterator.next();
+
+            if(operaciones.get(indice++) == '+') {
+
+                if (listIterator.hasNext()) {
+
+                    listIterator.set(valor + listIterator.next());
+                }
+            } else if (operaciones.get(indice++) == '-') {
+
+                if (listIterator.hasNext()) {
+
+                    listIterator.set(valor - listIterator.next());
+                }
+            }
+        }
+
+
+    }
+
+    private void verificar(List<Character> op) {
+        op.forEach(System.out::println);
     }
 }
