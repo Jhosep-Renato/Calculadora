@@ -24,7 +24,7 @@ public class Calculadora extends JFrame implements ActionListener {
     private JButton btnSuma;
     private JPanel panel2;
     private JButton btnIgual;
-    private double totol = 0;
+    private boolean primerResultado = false;
 
     public Calculadora() {
         getContentPane().add(panel);
@@ -46,7 +46,7 @@ public class Calculadora extends JFrame implements ActionListener {
         String campo = inputRespuesta.getText();
         int numero = -1;
 
-        if(!campo.isEmpty()) {
+        if (!campo.isEmpty()) {
             try {
                 String ultimo = String.valueOf(campo.charAt(campo.length() - 1));
                 numero = Integer.parseInt(ultimo);
@@ -56,7 +56,7 @@ public class Calculadora extends JFrame implements ActionListener {
             }
         }
 
-        if(e.getSource() == btnMult && !campo.isEmpty() && numero != -1) {
+        if (e.getSource() == btnMult && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "*");
         } else if (e.getSource() == btnDivision && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "/");
@@ -105,6 +105,7 @@ public class Calculadora extends JFrame implements ActionListener {
             case "*" -> resultado = Double.parseDouble(campos[0]) * Double.parseDouble(campos[1]);
             case "/" -> resultado = Double.parseDouble(campos[0]) / Double.parseDouble(campos[1]);
         }
+        primerResultado = true;
         return resultado;
     }
 
