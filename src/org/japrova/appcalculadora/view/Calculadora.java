@@ -3,11 +3,8 @@ package org.japrova.appcalculadora.view;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.ListIterator;
-
+import java.util.*;
+import static org.japrova.appcalculadora.model.Operacion.*;
 public class Calculadora extends JFrame implements ActionListener {
     private JTextField inputRespuesta;
     private JButton b1;
@@ -27,6 +24,7 @@ public class Calculadora extends JFrame implements ActionListener {
     private JButton btnSuma;
     private JPanel panel2;
     private JButton btnIgual;
+    private double totol = 0;
 
     public Calculadora() {
         getContentPane().add(panel);
@@ -59,6 +57,7 @@ public class Calculadora extends JFrame implements ActionListener {
         }
 
         if(e.getSource() == btnMult && !campo.isEmpty() && numero != -1) {
+
             inputRespuesta.setText(inputRespuesta.getText() + "*");
         } else if (e.getSource() == btnDivision && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "/");
@@ -67,6 +66,7 @@ public class Calculadora extends JFrame implements ActionListener {
         } else if (e.getSource() == btnResta && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "-");
         } else if (e.getSource() == btnIgual && !campo.isEmpty()) {
+            inputRespuesta.setText(String.valueOf(resolverOperaciones(campo)));
         } else {
             if (valor != null) {
                 inputRespuesta.setText(inputRespuesta.getText() + valor);
@@ -74,7 +74,7 @@ public class Calculadora extends JFrame implements ActionListener {
         }
     }
 
-    private void inicializarAcciones() {
+    private void inicializarAcciones() { // MÉTODO PARA INICIALIZAR EL LISTENER A CADA BOTÓN
         JButton[] botones = {b0, b1, b2, b3, b4, b5, b6, b7, b8, b9, btnDivision, btnMult, btnResta, btnSuma, btnIgual};
 
         for (JButton botone : botones) {
@@ -82,7 +82,7 @@ public class Calculadora extends JFrame implements ActionListener {
         }
     }
 
-    private HashMap<JButton, String> agregarValorBoton(JButton... botones) {
+    private HashMap<JButton, String> agregarValorBoton(JButton... botones) { // LOS BOTONES DE NÚMEROS TENDRÁN SU PROPIOS VALORES
 
         HashMap<JButton, String> valoresBotones = new HashMap<>();
 
@@ -93,46 +93,32 @@ public class Calculadora extends JFrame implements ActionListener {
         return valoresBotones;
     }
 
-    private void ordenarCampos(String campo) {
-        char[] digitos = campo.toCharArray();
-        double totalCampo = 0;
-        List<Character> operaciones = new ArrayList<>();
-        List<Double> campos = new ArrayList<>();
+    private double resolverOperaciones(String campo) {
 
-        for (char d: digitos) {
-            if (Character.isDigit(d)) {
-                totalCampo += d;
-                continue;
-            }
-            campos.add(totalCampo);
-            operaciones.add(d);
-        }
-        ListIterator<Double> listIterator = campos.listIterator();
+        String[] operaciones = { SUM.getOperacion(), RES.getOperacion(), DIV.getOperacion(), MULT.getOperacion()};
+        String op = null; // Hace referencia a operación
 
-        int indice = 0;
-        while (listIterator.hasNext()) {
+        for (int i = 0; i < operaciones.length; i++) {
 
-            double valor = listIterator.next();
-
-            if(operaciones.get(indice++) == '+') {
-
-                if (listIterator.hasNext()) {
-
-                    listIterator.set(valor + listIterator.next());
-                }
-            } else if (operaciones.get(indice++) == '-') {
-
-                if (listIterator.hasNext()) {
-
-                    listIterator.set(valor - listIterator.next());
-                }
+            if (campo.contains(operaciones[i])) {
+                op = operaciones[i];
+                break;
             }
         }
 
+        String[] campos =  campo.split(op);
+        double resultado = 0;
+        System.out.println(Arrays.toString(campos));
+        switch (op) {
+            case "+" -> resultado = Integer.parseInt(campos[0]) + Integer.parseInt(campos[1]);
+            case "-" -> resultado = Integer.parseInt(campos[0]) - Integer.parseInt(campos[1]);
+            case "*" -> resultado = Integer.parseInt(campos[0]) * Integer.parseInt(campos[1]);
+            case "/" -> resultado = (double) Integer.parseInt(campos[0]) / Integer.parseInt(campos[1]);
+        }
 
+        return resultado;
     }
 
-    private void verificar(List<Character> op) {
-        op.forEach(System.out::println);
-    }
+    // Realizar aquella operaciòn
+    // Devolver el dato para poder hacer la siguiente operaciòn
 }
