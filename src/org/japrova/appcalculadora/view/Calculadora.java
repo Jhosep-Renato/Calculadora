@@ -57,7 +57,6 @@ public class Calculadora extends JFrame implements ActionListener {
         }
 
         if(e.getSource() == btnMult && !campo.isEmpty() && numero != -1) {
-
             inputRespuesta.setText(inputRespuesta.getText() + "*");
         } else if (e.getSource() == btnDivision && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "/");
@@ -65,7 +64,7 @@ public class Calculadora extends JFrame implements ActionListener {
             inputRespuesta.setText(inputRespuesta.getText() + "+");
         } else if (e.getSource() == btnResta && !campo.isEmpty() && numero != -1) {
             inputRespuesta.setText(inputRespuesta.getText() + "-");
-        } else if (e.getSource() == btnIgual && !campo.isEmpty()) {
+        } else if (e.getSource() == btnIgual && !campo.isEmpty() && validarCampos(campo)) {
             inputRespuesta.setText(String.valueOf(resolverOperaciones(campo)));
         } else {
             if (valor != null) {
@@ -95,30 +94,40 @@ public class Calculadora extends JFrame implements ActionListener {
 
     private double resolverOperaciones(String campo) {
 
+        String op = tipoOperacion(campo);
+
+        String[] campos =  campo.split("[" + op + "]");
+        double resultado = 0;
+
+        switch (op) {
+            case "+" -> resultado = Double.parseDouble(campos[0]) + Double.parseDouble(campos[1]);
+            case "-" -> resultado = Double.parseDouble(campos[0]) - Double.parseDouble(campos[1]);
+            case "*" -> resultado = Double.parseDouble(campos[0]) * Double.parseDouble(campos[1]);
+            case "/" -> resultado = Double.parseDouble(campos[0]) / Double.parseDouble(campos[1]);
+        }
+        return resultado;
+    }
+
+
+    private boolean validarCampos(String campo) {
+
+        String[] campos = campo.split("[" + tipoOperacion(campo) + "]");
+
+        if (campos.length > 1) {
+               return true;
+        }
+        return false;
+    }
+    private static String tipoOperacion(String campo) {
         String[] operaciones = { SUM.getOperacion(), RES.getOperacion(), DIV.getOperacion(), MULT.getOperacion()};
         String op = null; // Hace referencia a operación
 
         for (int i = 0; i < operaciones.length; i++) {
-
             if (campo.contains(operaciones[i])) {
                 op = operaciones[i];
                 break;
             }
         }
-
-        String[] campos =  campo.split(op);
-        double resultado = 0;
-        System.out.println(Arrays.toString(campos));
-        switch (op) {
-            case "+" -> resultado = Integer.parseInt(campos[0]) + Integer.parseInt(campos[1]);
-            case "-" -> resultado = Integer.parseInt(campos[0]) - Integer.parseInt(campos[1]);
-            case "*" -> resultado = Integer.parseInt(campos[0]) * Integer.parseInt(campos[1]);
-            case "/" -> resultado = (double) Integer.parseInt(campos[0]) / Integer.parseInt(campos[1]);
-        }
-
-        return resultado;
+        return op;
     }
-
-    // Realizar aquella operaciòn
-    // Devolver el dato para poder hacer la siguiente operaciòn
 }
